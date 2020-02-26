@@ -6,30 +6,31 @@ void main() {
   group('Saslprep', () {
     test('should work with liatin letters', () {
       var str = 'user';
-      expect(Saslprep.saslprep(str),equals(str));
+      expect(Saslprep.saslprep(str), equals(str));
     });
 
     test('should work be case preserved', () {
       String str = 'USER';
-      expect(Saslprep.saslprep(str),equals(str));
+      expect(Saslprep.saslprep(str), equals(str));
     });
 
     test('should work with high code points (> U+FFFF)', () {
       String str = '\uD83D\uDE00';
-      expect(Saslprep.saslprep(str, options: SaslprepOptions(true)),equals(str));
+      expect(
+          Saslprep.saslprep(str, options: SaslprepOptions(true)), equals(str));
     });
 
     test('should remove `mapped to nothing` characters', () {
-      expect(Saslprep.saslprep('I\u00ADX'),equals('IX'));
+      expect(Saslprep.saslprep('I\u00ADX'), equals('IX'));
     });
 
     test('should replace `Non-ASCII space characters` with space', () {
-      expect(Saslprep.saslprep('a\u00A0b'),equals('a\u0020b'));
+      expect(Saslprep.saslprep('a\u00A0b'), equals('a\u0020b'));
     });
 
     test('should normalize as NFKC', () {
-      expect(Saslprep.saslprep('\u00AA'),equals('a'));
-      expect(Saslprep.saslprep('\u2168'),equals('IX'));
+      expect(Saslprep.saslprep('\u00AA'), equals('a'));
+      expect(Saslprep.saslprep('\u2168'), equals('IX'));
     });
 
     test('should throws when prohibited characters', () {
@@ -43,7 +44,8 @@ void main() {
       expect(() => Saslprep.saslprep('a\uE000b'), throwsA(isA<Exception>()));
 
       // C.4 Non-character code points
-      expect(() => Saslprep.saslprep('a${String.fromCharCode(0x1fffe)}b'), throwsA(isA<Exception>()));
+      expect(() => Saslprep.saslprep('a${String.fromCharCode(0x1fffe)}b'),
+          throwsA(isA<Exception>()));
 
       // C.5 Surrogate codes
       expect(() => Saslprep.saslprep('a\uD800b'), throwsA(isA<Exception>()));
@@ -58,21 +60,26 @@ void main() {
       expect(() => Saslprep.saslprep('a\u200Eb'), throwsA(isA<Exception>()));
 
       // C.9 Tagging characters
-      expect(() => Saslprep.saslprep('a${String.fromCharCode(0xe0001)}b'), throwsA(isA<Exception>()));
+      expect(() => Saslprep.saslprep('a${String.fromCharCode(0xe0001)}b'),
+          throwsA(isA<Exception>()));
     });
 
     test('should not containt RandALCat and LCat bidi', () {
-      expect(() => Saslprep.saslprep('a\u06DD\u00AAb'), throwsA(isA<Exception>()));
+      expect(
+          () => Saslprep.saslprep('a\u06DD\u00AAb'), throwsA(isA<Exception>()));
     });
 
     test('RandALCat should be first and last', () {
-      expect(() => Saslprep.saslprep('\u0627\u0031\u0628'), isNot(throwsA(isA<Exception>())));
-      expect(() => Saslprep.saslprep('\u0627\u0031'), throwsA(isA<Exception>()));
+      expect(() => Saslprep.saslprep('\u0627\u0031\u0628'),
+          isNot(throwsA(isA<Exception>())));
+      expect(
+          () => Saslprep.saslprep('\u0627\u0031'), throwsA(isA<Exception>()));
     });
 
     test('should handle unassigned code points', () {
       expect(() => Saslprep.saslprep('a\u0487'), throwsA(isA<Exception>()));
-      expect(() => Saslprep.saslprep('a\u0487', options: SaslprepOptions(true)),isNot(throwsA(isA<Exception>())));
+      expect(() => Saslprep.saslprep('a\u0487', options: SaslprepOptions(true)),
+          isNot(throwsA(isA<Exception>())));
     });
   });
 }

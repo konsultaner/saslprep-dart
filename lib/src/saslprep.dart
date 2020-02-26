@@ -45,10 +45,12 @@ class Saslprep {
     // 1. Map
     Iterable<int> mapped_input = toCodePoints(input)
         // 1.1 mapping to space
-        .map((character) =>
-            (non_ASCII_space_characters.indexOf(character) >= 0 ? 0x20 : character))
+        .map((character) => (non_ASCII_space_characters.indexOf(character) >= 0
+            ? 0x20
+            : character))
         // 1.2 mapping to nothing
-        .where((character) => commonly_mapped_to_nothing.indexOf(character) == -1);
+        .where(
+            (character) => commonly_mapped_to_nothing.indexOf(character) == -1);
 
     // 2. Normalize
     String normalized_input = unorm.nfkc(String.fromCharCodes(mapped_input));
@@ -77,8 +79,8 @@ class Saslprep {
     // 4. check bidi
     bool hasBidiRAL = normalized_map
         .any((character) => bidirectional_r_al.indexOf(character) >= 0);
-    bool hasBidiL =
-        normalized_map.any((character) => bidirectional_l.indexOf(character) >= 0);
+    bool hasBidiL = normalized_map
+        .any((character) => bidirectional_l.indexOf(character) >= 0);
 
     // 4.1 If a string contains any RandALCat character, the string MUST NOT
     // contain any LCat character.
@@ -90,8 +92,11 @@ class Saslprep {
     //4.2 If a string contains any RandALCat character, a RandALCat
     //character MUST be the first character of the string, and a
     //RandALCat character MUST be the last character of the string.
-    bool isFirstBidiRAL = bidirectional_r_al.indexOf(normalized_input.codeUnitAt(0)) >= 0;
-    bool isLastBidiRAL = bidirectional_r_al.indexOf(normalized_input.codeUnitAt(normalized_input.length - 1)) >= 0;
+    bool isFirstBidiRAL =
+        bidirectional_r_al.indexOf(normalized_input.codeUnitAt(0)) >= 0;
+    bool isLastBidiRAL = bidirectional_r_al.indexOf(
+            normalized_input.codeUnitAt(normalized_input.length - 1)) >=
+        0;
 
     if (hasBidiRAL && !(isFirstBidiRAL && isLastBidiRAL)) {
       throw new Exception(
