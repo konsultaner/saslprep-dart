@@ -12,8 +12,6 @@ class Saslprep {
   /// Convert provided string into an array of Unicode Code Points.
   /// Based on https://stackoverflow.com/a/21409165/1556249
   /// and https://www.npmjs.com/package/code-point-at.
-  /// @param {string} input
-  /// @returns {number[]}
   static toCodePoints(String input) {
     var codePoints = [];
     var size = input.length;
