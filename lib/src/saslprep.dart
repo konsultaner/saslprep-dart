@@ -57,7 +57,7 @@ class Saslprep {
 
     // 3. Prohibit
     bool hasProhibited = normalized_map
-        .every((character) => prohibited_characters.indexOf(character) >= 0);
+        .any((character) => prohibited_characters.indexOf(character) >= 0);
 
     if (hasProhibited) {
       throw new Exception(
@@ -67,7 +67,7 @@ class Saslprep {
     // Unassigned Code Points
     if (options == null || options.allowUnassigned != true) {
       bool hasUnassigned = normalized_map
-          .every((character) => unassigned_code_points.indexOf(character) >= 0);
+          .any((character) => unassigned_code_points.indexOf(character) >= 0);
       if (hasUnassigned) {
         throw new Exception(
             'Unassigned code point, see https://tools.ietf.org/html/rfc4013#section-2.5');
@@ -76,9 +76,9 @@ class Saslprep {
 
     // 4. check bidi
     bool hasBidiRAL = normalized_map
-        .every((character) => bidirectional_r_al.indexOf(character) >= 0);
+        .any((character) => bidirectional_r_al.indexOf(character) >= 0);
     bool hasBidiL =
-        normalized_map.every((character) => bidirectional_l.indexOf(character) >= 0);
+        normalized_map.any((character) => bidirectional_l.indexOf(character) >= 0);
 
     // 4.1 If a string contains any RandALCat character, the string MUST NOT
     // contain any LCat character.
