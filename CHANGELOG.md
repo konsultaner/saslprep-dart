@@ -1,3 +1,4 @@
-### 1.0.0-dev.1
+### 1.0.0
 
-- initial deployment to https://pub.dev 
+- initial deployment to https://pub.dev
+- complete tested an ported library 
