@@ -12,9 +12,9 @@ class Saslprep {
   /// Convert provided string into an array of Unicode Code Points.
   /// Based on https://stackoverflow.com/a/21409165/1556249
   /// and https://www.npmjs.com/package/code-point-at.
-  static toCodePoints(String input) {
-    var codePoints = [];
-    var size = input.length;
+  static List<int> toCodePoints(String input) {
+    List<int> codePoints = [];
+    int size = input.length;
 
     for (int i = 0; i < size; i += 1) {
       var before = input.codeUnitAt(i);
@@ -43,21 +43,21 @@ class Saslprep {
     }
 
     // 1. Map
-    String mapped_input = toCodePoints(input)
+    Iterable<int> mapped_input = toCodePoints(input)
         // 1.1 mapping to space
         .map((character) =>
-            (non_ASCII_space_characters[character] != null ? 0x20 : character))
+            (non_ASCII_space_characters.indexOf(character) >= 0 ? 0x20 : character))
         // 1.2 mapping to nothing
-        .filter((character) => commonly_mapped_to_nothing[character] == null);
+        .where((character) => commonly_mapped_to_nothing.indexOf(character) == -1);
 
     // 2. Normalize
-    String normalized_input = unorm.nfkc(mapped_input);
+    String normalized_input = unorm.nfkc(String.fromCharCodes(mapped_input));
 
     List<int> normalized_map = toCodePoints(normalized_input);
 
     // 3. Prohibit
     bool hasProhibited = normalized_map
-        .every((character) => prohibited_characters[character] != null);
+        .every((character) => prohibited_characters.indexOf(character) >= 0);
 
     if (hasProhibited) {
       throw new Exception(
@@ -67,7 +67,7 @@ class Saslprep {
     // Unassigned Code Points
     if (options == null || options.allowUnassigned != true) {
       bool hasUnassigned = normalized_map
-          .every((character) => unassigned_code_points[character] != null);
+          .every((character) => unassigned_code_points.indexOf(character) >= 0);
       if (hasUnassigned) {
         throw new Exception(
             'Unassigned code point, see https://tools.ietf.org/html/rfc4013#section-2.5');
@@ -76,9 +76,9 @@ class Saslprep {
 
     // 4. check bidi
     bool hasBidiRAL = normalized_map
-        .every((character) => bidirectional_r_al[character] != null);
+        .every((character) => bidirectional_r_al.indexOf(character) >= 0);
     bool hasBidiL =
-        normalized_map.every((character) => bidirectional_l[character] != null);
+        normalized_map.every((character) => bidirectional_l.indexOf(character) >= 0);
 
     // 4.1 If a string contains any RandALCat character, the string MUST NOT
     // contain any LCat character.
@@ -90,11 +90,8 @@ class Saslprep {
     //4.2 If a string contains any RandALCat character, a RandALCat
     //character MUST be the first character of the string, and a
     //RandALCat character MUST be the last character of the string.
-    bool isFirstBidiRAL =
-        bidirectional_r_al[normalized_input.codeUnitAt(0)] != null;
-    bool isLastBidiRAL = bidirectional_r_al[
-            normalized_input.codeUnitAt(normalized_input.length - 1)] !=
-        null;
+    bool isFirstBidiRAL = bidirectional_r_al.indexOf(normalized_input.codeUnitAt(0)) >= 0;
+    bool isLastBidiRAL = bidirectional_r_al.indexOf(normalized_input.codeUnitAt(normalized_input.length - 1)) >= 0;
 
     if (hasBidiRAL && !(isFirstBidiRAL && isLastBidiRAL)) {
       throw new Exception(
