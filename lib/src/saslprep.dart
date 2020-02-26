@@ -37,7 +37,7 @@ class Saslprep {
 
   /// This computes the saslprep algorithm. to allow allow unassigned use the
   /// [options] and set [options.allowUnassigned] to true
-  static saslprep(String input, {SaslprepOptions options = null}) {
+  static saslprep(String input, {SaslprepOptions options}) {
     if (input.isEmpty) {
       return '';
     }
@@ -45,12 +45,11 @@ class Saslprep {
     // 1. Map
     Iterable<int> mapped_input = toCodePoints(input)
         // 1.1 mapping to space
-        .map((character) => (non_ASCII_space_characters.indexOf(character) >= 0
+        .map((character) => (non_ASCII_space_characters.contains(character)
             ? 0x20
             : character))
         // 1.2 mapping to nothing
-        .where(
-            (character) => commonly_mapped_to_nothing.indexOf(character) == -1);
+        .where((character) => !commonly_mapped_to_nothing.contains(character));
 
     // 2. Normalize
     String normalized_input = unorm.nfkc(String.fromCharCodes(mapped_input));
@@ -59,33 +58,33 @@ class Saslprep {
 
     // 3. Prohibit
     bool hasProhibited = normalized_map
-        .any((character) => prohibited_characters.indexOf(character) >= 0);
+        .any((character) => prohibited_characters.contains(character));
 
     if (hasProhibited) {
-      throw new Exception(
+      throw Exception(
           'Prohibited character, see https://tools.ietf.org/html/rfc4013#section-2.3');
     }
 
     // Unassigned Code Points
     if (options == null || options.allowUnassigned != true) {
       bool hasUnassigned = normalized_map
-          .any((character) => unassigned_code_points.indexOf(character) >= 0);
+          .any((character) => unassigned_code_points.contains(character));
       if (hasUnassigned) {
-        throw new Exception(
+        throw Exception(
             'Unassigned code point, see https://tools.ietf.org/html/rfc4013#section-2.5');
       }
     }
 
     // 4. check bidi
     bool hasBidiRAL = normalized_map
-        .any((character) => bidirectional_r_al.indexOf(character) >= 0);
+        .any((character) => bidirectional_r_al.contains(character));
     bool hasBidiL = normalized_map
-        .any((character) => bidirectional_l.indexOf(character) >= 0);
+        .any((character) => bidirectional_l.contains(character));
 
     // 4.1 If a string contains any RandALCat character, the string MUST NOT
     // contain any LCat character.
     if (hasBidiRAL && hasBidiL) {
-      throw new Exception(
+      throw Exception(
           'String must not contain RandALCat and LCat at the same time, see https://tools.ietf.org/html/rfc3454#section-6');
     }
 
@@ -93,13 +92,12 @@ class Saslprep {
     //character MUST be the first character of the string, and a
     //RandALCat character MUST be the last character of the string.
     bool isFirstBidiRAL =
-        bidirectional_r_al.indexOf(normalized_input.codeUnitAt(0)) >= 0;
-    bool isLastBidiRAL = bidirectional_r_al.indexOf(
-            normalized_input.codeUnitAt(normalized_input.length - 1)) >=
-        0;
+        bidirectional_r_al.contains(normalized_input.codeUnitAt(0));
+    bool isLastBidiRAL = bidirectional_r_al.contains(
+            normalized_input.codeUnitAt(normalized_input.length - 1));
 
     if (hasBidiRAL && !(isFirstBidiRAL && isLastBidiRAL)) {
-      throw new Exception(
+      throw Exception(
           'Bidirectional RandALCat character must be the first and the last character of the string, see https://tools.ietf.org/html/rfc3454#section-6');
     }
 
