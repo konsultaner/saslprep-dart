@@ -1,0 +1,5 @@
+.dart_tool
+.idea
+saslprep-dart.iml
+.packages
+pubspec.lock
