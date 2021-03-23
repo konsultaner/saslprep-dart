@@ -25,7 +25,8 @@ class Saslprep {
         var next = input.codeUnitAt(i + 1);
 
         if (next >= 0xdc00 && next <= 0xdfff) {
-          codePoints[codePointIndex++] = ((before - 0xd800) * 0x400 + next - 0xdc00 + 0x10000);
+          codePoints[codePointIndex++] =
+              ((before - 0xd800) * 0x400 + next - 0xdc00 + 0x10000);
           i++;
           sizeOffset++;
           continue;
@@ -47,9 +48,8 @@ class Saslprep {
     // 1. Map
     var mapped_input = toCodePoints(input)
         // 1.1 mapping to space
-        .map((character) => (non_ASCII_space_characters.contains(character)
-            ? 0x20
-            : character))
+        .map((character) =>
+            (non_ASCII_space_characters.contains(character) ? 0x20 : character))
         // 1.2 mapping to nothing
         .where((character) => !commonly_mapped_to_nothing.contains(character));
 
@@ -80,8 +80,8 @@ class Saslprep {
     // 4. check bidi
     var hasBidiRAL = normalized_map
         .any((character) => bidirectional_r_al.contains(character));
-    var hasBidiL = normalized_map
-        .any((character) => bidirectional_l.contains(character));
+    var hasBidiL =
+        normalized_map.any((character) => bidirectional_l.contains(character));
 
     // 4.1 If a string contains any RandALCat character, the string MUST NOT
     // contain any LCat character.
@@ -95,8 +95,8 @@ class Saslprep {
     //RandALCat character MUST be the last character of the string.
     var isFirstBidiRAL =
         bidirectional_r_al.contains(normalized_input.codeUnitAt(0));
-    var isLastBidiRAL = bidirectional_r_al.contains(
-            normalized_input.codeUnitAt(normalized_input.length - 1));
+    var isLastBidiRAL = bidirectional_r_al
+        .contains(normalized_input.codeUnitAt(normalized_input.length - 1));
 
     if (hasBidiRAL && !(isFirstBidiRAL && isLastBidiRAL)) {
       throw Exception(
