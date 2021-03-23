@@ -10,12 +10,12 @@ void main() {
     });
 
     test('should work be case preserved', () {
-      String str = 'USER';
+      var str = 'USER';
       expect(Saslprep.saslprep(str), equals(str));
     });
 
     test('should work with high code points (> U+FFFF)', () {
-      String str = '\uD83D\uDE00';
+      var str = '\uD83D\uDE00';
       expect(
           Saslprep.saslprep(str, options: SaslprepOptions(true)), equals(str));
     });
