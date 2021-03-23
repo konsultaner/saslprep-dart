@@ -1,6 +1,4 @@
 name: saslprep
-authors:
-  - Richard Burkhardt <my.richidd@gmail.com>
 homepage: https://github.com/konsultaner/saslprep-dart
 version: 1.0.1
 description: >-
