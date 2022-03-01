@@ -1,3 +1,7 @@
+### 1.0.3
+
+- added build management for browser js file
+
 ### 1.0.2
 
 - null safety

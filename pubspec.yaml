@@ -4,9 +4,12 @@ version: 1.0.2
 description: >-
   This package provides the Stringprep (rfc4013) Profile for User Names and Passwords for dart. A port of https://github.com/reklatsmasters/saslprep to the dart lang
 dependencies:
-  pedantic: ^1.9.2
+  pedantic: ^1.11.1
   unorm_dart: ^0.2.0
 dev_dependencies:
   test: ^1.20.1
+  build_runner: ^2.1.0
+  build_test: ^2.1.0
+  build_web_compilers: ^3.0.0
 environment:
   sdk: ">=2.12.0 <3.0.0"
