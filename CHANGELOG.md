@@ -1,6 +1,7 @@
 ### 1.0.3
 
 - added build management for browser js file
+- update `unorm_dart` to 0.3.0
 
 ### 1.0.2
 
