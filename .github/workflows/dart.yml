@@ -1,3 +1,4 @@
+
 name: Dart
 
 on:
@@ -11,17 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
         run: dart pub get
-
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
-
       - name: Analyze project source
         run: dart analyze
-      
-      - name: Run test and generate code coverage
-        run: pub run test -p vm --coverage="./coverage" && pub global activate coverage && format_coverage -l -i ./ -o lcov.info --packages=.packages --report-on=lib && bash <(curl -s https://codecov.io/bash)
+      - name: Run tests
+        run: dart run test --coverage="./coverage"
+      - name: Activate coverage
+        run: dart pub global activate coverage
+      - name: Format coverage
+        run: format_coverage -l -i ./ -o lcov.info --packages=.dart_tool/package_config.json --report-on=lib
+      - name: Upload coverage
+        run: bash <(curl -s https://codecov.io/bash)
